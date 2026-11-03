@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nesma Tasks Demo</title>
+  <style>
+    :root { color-scheme: light dark; --bg: #f4f5f3; --card: #fcfcfb; --text: #0b0b0b; --muted: #52514e; --brand: #0f766e; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #0d0d0d; --card: #1a1a19; --text: #f0efec; --muted: #c3c2b7; --brand: #2bb3a5; } }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; padding: 16px; box-sizing: border-box; }
+    .card { background: var(--card); border-radius: 14px; padding: 28px; max-width: 420px; width: 100%; text-align: center; border: 1px solid rgba(127,127,127,.2); }
+    .mark { width: 52px; height: 52px; border-radius: 12px; background: var(--brand); color: #fff; font-weight: 800; font-size: 26px; display: grid; place-items: center; margin: 0 auto 12px; }
+    p { color: var(--muted); margin: 8px 0; }
+    a { color: var(--brand); }
+    code { font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="mark">N</div>
+    <h1 style="margin:0;font-size:22px">Nesma Tasks</h1>
+    <p id="msg">Opening the live demo…</p>
+    <p id="extra" style="font-size:14px"></p>
+  </div>
+  <script>
+    // The current demo address is kept in link.json in this repository and is
+    // updated automatically by `npm run demo:public`. Read through the GitHub
+    // API (fresh within ~1 minute) with the Pages copy as a fallback.
+    const repo = location.hostname.split('.')[0] + '/' + (location.pathname.split('/')[1] || 'nesma-demo');
+    const fromApi = () =>
+      fetch('https://api.github.com/repos/' + repo + '/contents/link.json', { cache: 'no-store' })
+        .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+        .then((j) => JSON.parse(atob(j.content.replace(/\n/g, ''))));
+    const fromPages = () => fetch('link.json?t=' + Date.now(), { cache: 'no-store' }).then((r) => r.json());
+    const msg = document.getElementById('msg');
+    const extra = document.getElementById('extra');
+    fromApi()
+      .catch(fromPages)
+      .then((data) => {
+        if (data && data.url) {
+          msg.innerHTML = 'Opening the live demo… <a href="' + data.url + '">continue</a>';
+          location.replace(data.url);
+        } else {
+          msg.textContent = 'The live demo is offline right now.';
+          extra.textContent = 'Please try again later or contact the author.';
+        }
+      })
+      .catch(() => {
+        msg.textContent = 'Could not look up the demo address. Please refresh the page.';
+      });
+  </script>
+</body>
+</html>
