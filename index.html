@@ -26,7 +26,7 @@
     // The current demo address is kept in link.json in this repository and is
     // updated automatically by `npm run demo:public`. Read through the GitHub
     // API (fresh within ~1 minute) with the Pages copy as a fallback.
-    const repo = location.hostname.split('.')[0] + '/' + (location.pathname.split('/')[1] || 'nesma-demo');
+    const repo = 'Basem1166/nesma-demo';
     const fromApi = () =>
       fetch('https://api.github.com/repos/' + repo + '/contents/link.json', { cache: 'no-store' })
         .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
